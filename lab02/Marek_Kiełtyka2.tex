@@ -1,0 +1,183 @@
+\input{../preamble.tex}
+
+\title{\Large\vspace{-2.5cm}{\Huge S}PRAWOZDANIE - LABORATORIUM NR {\Huge2}\\
+		\textbf{Odwracanie macierzy, obliczanie wyznacznika \\i wskaźnika uwarunkowania macierzy \\przy użyciu rozkładu LU } } 
+\date{\Large7 marca 2019}
+\author{\Large Marek Kiełtyka}
+
+\begin{document}
+\maketitle
+
+\section{Wstęp}
+	
+\subsection{Rozkład LU}
+
+Zasadniczym celem metody jest znalezienie takich dwóch macierzy trójkątnych \textbf{L}, \textbf{U} dla których prawdziwa jest równość
+\begin{equation}
+\boldsymbol{A = L \cdot U},
+\label{lu}
+\end{equation}
+gdzie \textbf{A} - wyjściowa macierz. Z kolei pozostałe oznaczenia pochodzą od angielskich nazw:
+\begin{itemize}
+	\item \textit{Lower} - dolna z jedynkami na głównej przekątnej,
+	\item \textit{Upper} - górna z niezerowymi elementami na głównej przekątnej.
+\end{itemize}
+ Metoda ta znacznie ułatwia rozwiązywanie układów równań liniowych i znajdowanie właściwości danej macierzy, jednak główny nacisk położony jest na uzyskanie równości (\ref{lu}). Najlepiej wykorzystać poniższą metodę.
+
+\subsection{Wyznaczanie macierzy LU metodą Gaussa}
+
+Analogicznie jak przy obliczaniu macierzy odwrotnej, należy dokonać zestawienia $ \left[\boldsymbol{I}\right]\left[\boldsymbol{A}\right] $. Co ważne, kolejność jest inna niż w tamtym przypadku. 
+Ponadto nie chodzi tutaj o dążenie do $ \left[\boldsymbol{I}\right]\left[\boldsymbol{A^{-1}}\right]. $
+Główny problem stanowi uzyskanie macierzy \textbf{L}, \textbf{U} w danym zestawieniu w odpowiednich miejscach przy użyciu dozwolonych tą metodą sposobów (dodawanie wierszy, mnożenie przez skalar etc.). Zatem po przeprowadzeniu toku rozumowania spodziewanym wynikiem będzie:
+
+\begin{equation}
+\begin{bmatrix}
+1 		& 0 	  & 0 	    & \dots  & 0 	\\  
+l_{2,1} & 1 	  & 0 	    & \dots  & 0	 \\
+l_{3,1} & l_{3,2} & 1 	    & \dots  & 0 	  \\
+\vdots  & \vdots  & \vdots  & \ddots & \vdots \\
+l_{n,1} & l_{n,2} & l_{n,3} & \dots  & 1 	 
+\end{bmatrix}
+\begin{bmatrix}
+u_{1,1} & u_{1,2} & u_{1,3} & \dots & u_{1,n} \\
+0 & u_{2,2} & u_{2,3} & \dots & u_{2,n} \\
+0 & 0 & u_{3, 3} & \dots & u_{3, n} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \dots & u_{n,n}
+\end{bmatrix}
+\end{equation}
+Innymi słowy jest to równoważna postać prawej strony równania (\ref{lu}).
+
+\subsection{Wyznacznik rozłożonej macierzy}
+
+Z właśności wyznacznika:
+\begin{equation}
+det(A) = det(LU) = det(L) \cdot det(U) = det(U) \implies det(A) = \prod_{i=1}^{n} u_{i,i}
+\label{wyznacznik}
+\end{equation}
+Przekształcenia w wyrażeniu (\ref{wyznacznik}) były możliwe dzięki obecności jedynek na diagonali macierzy \textbf{L}. Finalnie, wyznacznik macierzy wyjściowej można obliczyć jako iloczyn elementów głównej przekątnej macierzy \textbf{U}. 
+
+\subsection{Rozwiązywanie URL}
+Biorąc pod uwagę (\ref{lu}) można przedstawić układ równań liniowych jako
+
+\begin{equation}
+A\vec{x} =\vec{b}
+\implies
+LU\vec{x} =\vec{b}.
+\label{pojedynczy}
+\end{equation}
+Zakładając $ U\vec{x} =\vec{y} $ wystarczy rozwiązać układ równań zawierający macierze trójkątne.
+\begin{equation}
+\begin{cases}
+L\vec{y} =\vec{b} \\
+U\vec{x} =\vec{y}
+\end{cases}
+\end{equation}
+Obliczenie $ \vec{y} $ pozwala uzyskać rozwiązanie $ \vec{x} $ i czyni to szybciej niż w przypadku pojedynczego układu (\ref{pojedynczy}).
+
+\subsection{Wskaźnik uwarunkowania macierzy}
+Jest to wielkość mówiąca o tym, jak bardzo dane wejściowe mogą zaburzyć poszukiwane rozwiązanie (tj. wpłynąć na błędy wyniku). Najlepiej wyznaczyć ją korzystając z\,relacji:
+\begin{equation}
+\kappa(A)= \begin{Vmatrix} A \end{Vmatrix} \cdot \begin{Vmatrix} A^{-1} \end{Vmatrix}
+\end{equation}
+i używając dodatkowo normy zdefiniowanej jako największa bezwzględna wartość danej macierzy.
+ 
+\section{Zadanie do wykonania}
+
+\subsection{Opis problemu}
+
+Na zajęciach laboratoryjnych dokonano analizy macierzy kwadratowej o rozmiarze $N = 4$, której elementy zdefiniowano jako: $a_{i,j} = \frac{1}{i + j + \delta}$ dla $i,j \in \{1, 2, 3, 4\}$. Przyjęto parametr $\delta = 0$, bo skorzystano z biblioteki \textit{Numerical Recipes}. Wzorem wstępu teoretycznego analiza składała się z wyznaczenia:
+\begin{itemize}
+	\item macierzy LU, a także każdej z osobna
+	\item wyznacznika macierzy wyjściowej 
+	\item macierzy odwrotnej
+	\item iloczynu $ AA^{-1} $
+	\item norm tych macierzy, a w konsekwencji wskaźnika uwarunkowania macierzy\,wyjściowej
+\end{itemize}
+
+\subsection{Wyniki}
+
+Korzystając z wyżej wspomnianej biblioteki zawierającej m.in. poniższe procedury:
+\begin{center}
+	\textit{
+void ludcmp(float **matrix, int size, int *indx, float *d); \\
+void lubksb(float **matrix, int size, int *indx, float *vector); }
+\end{center}
+napisano program w języku C++ celem dokonania analizy. Pierwsza z funkcji nadpisuje wejściową macierz jej rozkładem LU, aby zaoszczędzić pamięć komputera. Jednak na potrzeby zadania wykonano kopię, aby móc sprawdzać zawartość obu macierzy równocześnie. 
+
+Funkcja druga umożliwiła znalezienie macierzy odwrotnej dzięki rozwiązaniu czterech układów równań postaci $ A\vec{x} =\vec{b} $. Tam kolejno zmieniał się tylko wektor wyrazów wolnych w sposób następujący:
+
+\begin{equation}
+b_1 = 
+\begin{bmatrix}
+1\\0\\0\\0
+\end{bmatrix}
+b_2 = 
+\begin{bmatrix}
+0\\1\\0\\0
+\end{bmatrix}
+b_3 = 
+\begin{bmatrix}
+0\\0\\1\\0
+\end{bmatrix}
+b_4 = 
+\begin{bmatrix}
+0\\0\\0\\1
+\end{bmatrix}
+\end{equation}
+Wektor $ \vec{x} $ zawierał w sobie daną kolumnę macierzy odwrotnej w kolejnych iteracjach. Z\,kolei do mnożenia macierzy wykorzystano klasyczny algorytm iterujący po kolumnach i\,wierszach.
+
+Wszystkie wyniki przekierowano do pliku jako strumień wyjściowy wykonania programu i zaprezentowano poniżej.
+
+\begin{equation*}
+L = 
+\begin{bmatrix}
+1 &0& 0& 0 \\
+2.5 &1 &0& 0 \\
+1.(6)& 0.(3)& 1& 0 \\
+1.25 &0.1 &0.499997 &1 
+\end{bmatrix}
+U = 
+\begin{bmatrix}
+0.2& 0.1(6) &0.142857& 0.125 \\
+0 &-0.08(3)& -0.107143& -0.1125\\ 
+0 &0 &-0.00238095& -0.00416666 \\
+0 &0& 0& -5.95264\times 10^{-5}
+\end{bmatrix}
+\end{equation*}
+
+\begin{center}
+	$ det(A) = -2.36216 \times 10^{-9} $
+\end{center}
+
+\begin{equation*}
+A^{-1} = 
+\begin{bmatrix}
+199.992 &-1199.95 &2099.9 &-1119.95 \\
+-1199.94 &8099.62 &-15119.3& 8399.65 \\
+2099.88 &-15119.3 &29398.7 &-16799.3 \\ 
+-1119.93 &8399.58& -16799.3 &9799.61 
+\end{bmatrix}
+\end{equation*}
+
+\begin{equation*}
+AA^{-1} = 
+\begin{bmatrix}
+0.999985 &0 &-0.000976562 &0.000244141 \\
+-1.52588\times10^{-5} &1 &-0.000732422& 0.000244141\\ 
+0& 0.00012207 &0.999756 &0.000244141 \\
+0 &0& 0& 1 
+\end{bmatrix}
+\end{equation*}
+
+$$ \kappa(A)= \begin{Vmatrix} A \end{Vmatrix} \cdot \begin{Vmatrix} A^{-1} \end{Vmatrix} = 0.5\cdot29398.7 = 14699.4 $$
+
+\section{Wnioski}
+
+Metoda LU czyni dużo łatwiejszymi do obliczenia: wyznacznik, macierz odwrotną i\,zależny od niej wskaźnik uwarunkowania macierzy wyjściowej. Nie jest przy tym pozbawiona wad. Wystarczy spojrzeć na iloczyn $ AA^{-1} $, który powinien być dokładnie równy macierzy jednostkowej. Jednym z powodów może być bardzo duży wskaźnik uwarunkowania. Po części za otrzymany wynik odpowiada również komputerowa reprezentacja liczb zmiennoprzecinkowych.
+
+Dodatkowo niski rząd wielkości elementów macierzy $ U $ na głównej przekątnej przyczynia się do wartości wyznacznika badanej macierzy oscylującej w granicach zera. 
+
+Wszystko to świadczy o złym uwarunkowaniu zadania. Warto korzystać z metody LU w obliczeniach numerycznych, choć jak pokazało niniejsze laboratorium, nie zawsze daje to korzystne rezultaty.
+
+\end{document}

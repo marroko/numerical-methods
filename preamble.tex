@@ -1,0 +1,32 @@
+\documentclass[a4paper,onecolumn,12pt]{article}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[left=2.54cm,right=2.54cm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath,calc,indentfirst,fancyhdr,amsfonts,graphicx,epstopdf,caption, mathcomp, subcaption,wrapfig, siunitx}
+
+\renewcommand{\baselinestretch}{1.1}	 % odstep miedzy liniami
+\addto\captionspolish{\renewcommand{\figurename}{Wykres}} % zmiana podpisu pod obrazkami, zamiast "Rysunek" bedzie "Wykres"
+\newcommand{\NN}{\mathbb{N}}			 % makro do znaku liczb naturalnych
+
+\newcommand{\R}[1]{\textcolor{red}{#1}}  % makro do polecenia z parametrami - tutaj 1 parametr
+\newcommand{\G}[1]{\textcolor{green}{#1}} 
+\newcommand{\B}[1]{\textcolor{RoyalBlue}{#1}} 
+% kolorowanie {\B{argument}}
+
+\newcommand{\PICTURES}{} % szybsza kompilacja dzieki stalej "usuwajacej" obrazki
+						 % zakomentowanie \PICTURES powoduje znikniecie obrazkow
+
+\pagestyle{fancy} % formatuj caly dokument
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[R]{\thepage} % dla stron poza tytulowa nr w prawym dolnym rogu
+
+\fancypagestyle{plain}{ % dla strony tytulowej nr w prawym dolnym rogu
+	
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyhf{}
+	\fancyfoot[R]{\thepage}
+}

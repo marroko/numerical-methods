@@ -1,10 +1,10 @@
 #pragma once
 
-#include "opt/NR/numerical_recipes.c/nrutil.h"
-#include "opt/NR/numerical_recipes.c/nrutil.c"
-//#include "opt/NR/numerical_recipes.c/gaussj.c"
-//#include "opt/NR/numerical_recipes.c/ludcmp.c"
-//#include "opt/NR/numerical_recipes.c/lubksb.c"
+#include "/opt/NR/numerical_recipes.c/nrutil.h"
+#include "/opt/NR/numerical_recipes.c/nrutil.c"
+#include "/opt/NR/numerical_recipes.c/gaussj.c"
+//#include "/opt/NR/numerical_recipes.c/ludcmp.c"
+//#include "/opt/NR/numerical_recipes.c/lubksb.c"
 
 #include <iostream>
 #include <string>
@@ -19,11 +19,12 @@ public:
 
     IVector(const int s = 1, std::string n = "") :
                                             size(s),
-                                            name(n) {}
+                                            name(n) { v = ivector(1,s);}
 
     ~IVector() { free_ivector(this->v, 1, size); }
 
     int * operator()() { return v; }
+    int operator[](const int i) const { return v[i]; }
     int & operator[](const int i) { return v[i]; }
     int & operator*() { return *v; }
 
@@ -33,17 +34,25 @@ public:
             return *this;
         if(this->size != other.getSize()) {
 
-            std::cout << "Zle przypisanie!\n";
+            std::cout << "Zle przypisanie IVectora!\n";
             return *this;
         }
 
-       size = other.size;
-	v = ivector(1, size);
+        free_ivector(this->v, 1, size);
+        this->v = ivector(1, size); 
 
-           for(int i = 0 ; i < size; i++)
+        for(int i = 1 ; i <= size; i++)
             this->v[i] = other[i];
 
        return *this;
+    }
+    IVector(const IVector &other) {
+
+        this->size = other.getSize(); 
+        this->v = ivector(1, size);
+
+        for(int i = 1 ; i <= size; i++)
+            this->v[i] = other[i];
     }
 
     friend std::ostream& operator<<(std::ostream& output, IVector &vec) {
@@ -60,7 +69,7 @@ public:
         return output;
     }
 
-    int getSize() { return size; }
+    int getSize() const { return size; }
     int & getValue(const int i) { return v[i]; }
     void setName(std::string n) { name = n; }
 
@@ -76,7 +85,7 @@ class FVector {
 public:
 
     FVector(const int s = 1, std::string n = "") :
-	    			size(s),
+	    			            size(s),
                                 name(n) { f = vector(1,s); }
 
     ~FVector() { free_vector(this->f, 1, size); }
@@ -93,11 +102,11 @@ public:
 
         if(this->size != other.getSize()) {
 
-            std::cout << "Zle przypisanie!\n";
+            std::cout << "Zle przypisanie FVectora!\n";
             return *this;
         }
 
-	free_vector(this->f, 1, size);
+	    free_vector(this->f, 1, size);
         this->f = vector(1, size); 
 
         for(int i = 1 ; i <= size; i++)
@@ -133,7 +142,7 @@ public:
         return tmp;
     }
 
-    FVector operator*(float scalar) {
+    FVector operator*(float scalar) { // mnozenie wektora przez skalar
 
         FVector tmp(this->size);
 
@@ -143,7 +152,7 @@ public:
         return tmp;
     }
 
-    float operator*(const FVector &other) {  // skalarne mnozenie
+    float operator*(const FVector &other) {  // skalarne mnozenie wektorow
 
         float sum = 0.0;
 
@@ -157,17 +166,15 @@ public:
 
         output << "FVector " << vec.name << "\n";
 
-        for(int i=1; i<=vec.size; ++i) {
-
-            output << vec[i]
-                      << "\n";
-        }
+        for(int i=1; i<=vec.size; ++i)
+            output << vec[i] << "\n";
+            
         output << "\n";
 
         return output;
     }
 
-    float normVector() {
+    float normVector() { // norma euklidesowa wektora jako pierwiastek z jego skalarnego mnozenia przez siebie
 
         return sqrt(*this * *this);
     }
@@ -205,7 +212,7 @@ public:
 
         if(this->size != other.getSize()) {
 
-            std::cout << "Zle przypisanie!\n";
+            std::cout << "Zle przypisanie DVectora!\n";
             return *this;
         }
 
@@ -245,7 +252,7 @@ public:
         return tmp;
     }
 
-    DVector operator*(float scalar) {
+    DVector operator*(float scalar) { // mnozenie wektora double przez skalar
 
         DVector tmp(this->size);
 
@@ -255,7 +262,7 @@ public:
         return tmp;
     }
 
-    double operator*(const DVector &other) {  // skalarne mnozenie
+    double operator*(const DVector &other) {  // skalarne mnozenie wektorow double
 
         double sum = 0.0;
 
@@ -269,17 +276,14 @@ public:
 
         output << "FVector " << vec.name << "\n";
 
-        for(int i=1; i<=vec.size; ++i) {
+        for(int i=1; i<=vec.size; ++i)
+            output << vec[i] << "\n";
 
-            output << vec[i]
-                      << "\n";
-        }
         output << "\n";
-
         return output;
     }
 
-    double normVector() {
+    double normVector() { // norma euklidesowa wektora double jako pierwiastek z jego skalarnego mnozenia przez siebie
 
         return sqrt(*this * *this);
     }
@@ -308,33 +312,35 @@ public:
 
     Matrix & operator=(const Matrix &other){
 
-       rows = other.rows;
-       columns = other.columns;
+       if(rows != other.rows || columns != other.columns) {
+           
+           std::cout << "Zle przypisanie Matrixa!\n";
+           return *this;
+       }
+       free_matrix(m, 1, rows, 1, columns);
        m = matrix(1, rows, 1, columns);
 
-           for(int i = 1 ; i <= rows; i++) {
-               for(int j = 1 ; j <= columns; j++)
-                   this->m[i][j] = other.m[i][j];
-           }
+        for(int i = 1 ; i <= rows; i++) {
+            for(int j = 1 ; j <= columns; j++)
+                this->m[i][j] = other.m[i][j];
+        }
        return *this;
     }
 
-    Matrix & operator=(Matrix &other){
+    Matrix(const Matrix &other){
 
-        if(this == &other)
-            return *this;
-        if(rows != other.rows || columns != other.columns)
-            return *this;
+        rows = other.rows;
+        columns = other.columns;
+        m = matrix(1, rows, 1, columns);
 
        for(int i = 1; i <= rows; i++) {
            for(int j = 1 ; j <= columns; j++)
                this->m[i][j] = other.m[i][j];
        }
-       return *this;
     }
 
 
-    friend std::ostream& operator<<(std::ostream& output, Matrix &m) {
+    friend std::ostream& operator<<(std::ostream& output, const Matrix &m) {
 
         output << "\t\tMacierz " << m.name << "\n";
 
@@ -349,26 +355,26 @@ public:
         return output;
     }
 
-    Matrix * operator*(Matrix& other){
+    Matrix operator*(const Matrix& other){
 
         int n = this->rows;
         int m = other.columns;
 
-        Matrix *tmp = new Matrix(n,m);
+        Matrix tmp(n,m);
 
         for(int i = 1 ; i <= n; i++) {
 
             for(int j=1; j <= m; ++j) {
 
-                tmp->m[i][j] = 0.0;
+                tmp.m[i][j] = 0.0;
                 for(int k=1; k<=this->columns; ++k)
-                    tmp->m[i][j] += this->m[i][k] * other.m[k][j];
+                    tmp.m[i][j] += this->m[i][k] * other.m[k][j];
             }
         }
         return tmp;
     }
 
-    FVector operator*(const FVector &other){
+    FVector operator*(const FVector &other) { // mnozenie Matrix przez FVector
 
         int n = other.getSize();
 
@@ -389,7 +395,7 @@ public:
     const float & operator()(const int i, const int j) const { return m[i][j]; }
     float ** operator()() { return m; }
 
-    float ptrMatrix() {
+    float ptrMatrix() { // wskaznik uwarunkowania Matrix float jako najwieksza bezwzgledna wartosc z jej wnetrza
 
         float max = fabs(m[1][1]);
 
@@ -428,33 +434,34 @@ public:
 
     DMatrix & operator=(const DMatrix &other){
 
-        rows = other.rows;
-        columns = other.columns;
-        m = dmatrix(1, rows, 1, columns);
+        if(rows != other.rows || columns != other.columns) {
+           
+           std::cout << "Zle przypisanie DMatrixa!\n";
+           return *this;
+        }
+       free_dmatrix(m, 1, rows, 1, columns);
+       m = dmatrix(1, rows, 1, columns);
 
         for(int i = 1 ; i <= rows; i++) {
             for(int j = 1 ; j <= columns; j++)
                 this->m[i][j] = other.m[i][j];
         }
-        return *this;
+       return *this;
     }
 
-    DMatrix & operator=(DMatrix &other){
+    DMatrix(const DMatrix &other){
 
-        if(this == &other)
-            return *this;
-        if(rows != other.rows || columns != other.columns)
-            return *this;
+        rows = other.rows;
+        columns = other.columns;
+        m = dmatrix(1, rows, 1, columns);
 
-        for(int i = 1; i <= rows; i++) {
-            for(int j = 1 ; j <= columns; j++)
-                this->m[i][j] = other.m[i][j];
-        }
-        return *this;
+       for(int i = 1; i <= rows; i++) {
+           for(int j = 1 ; j <= columns; j++)
+               this->m[i][j] = other.m[i][j];
+       }
     }
 
-
-    friend std::ostream& operator<<(std::ostream& output, DMatrix &m) {
+    friend std::ostream& operator<<(std::ostream& output, const DMatrix &m) {
 
         output << "\t\tMacierz " << m.name << "\n";
 
@@ -469,26 +476,26 @@ public:
         return output;
     }
 
-    DMatrix * operator*(DMatrix& other){
+    DMatrix operator*(const DMatrix& other){ // mnozenie DMatrix przez DMatrix
 
         int n = this->rows;
         int m = other.columns;
 
-        DMatrix *tmp = new DMatrix(n,m);
+        DMatrix tmp(n,m);
 
         for(int i = 1 ; i <= n; i++) {
 
             for(int j=1; j <= m; ++j) {
 
-                tmp->m[i][j] = 0.0;
+                tmp.m[i][j] = 0.0;
                 for(int k=1; k<=this->columns; ++k)
-                    tmp->m[i][j] += this->m[i][k] * other.m[k][j];
+                    tmp.m[i][j] += this->m[i][k] * other.m[k][j];
             }
         }
         return tmp;
     }
 
-    DVector operator*(const DVector &other){
+    DVector operator*(const DVector &other) { // mnozenie DMatrix przez DVector
 
         int n = other.getSize();
 
@@ -509,7 +516,7 @@ public:
     const double & operator()(const int i, const int j) const { return m[i][j]; }
     double ** operator()() { return m; }
 
-    double ptrMatrix() {
+    double ptrMatrix() { // wskaznik uwarunkowania DMatrix jako najwieksza bezwzgledna wartosc z jej wnetrza
 
         double max = fabs(m[1][1]);
 

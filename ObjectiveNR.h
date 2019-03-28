@@ -2,14 +2,17 @@
 
 #include "/opt/NR/numerical_recipes.c/nrutil.h"
 #include "/opt/NR/numerical_recipes.c/nrutil.c"
-#include "/opt/NR/numerical_recipes.c/gaussj.c"
+#include "/opt/NR/numerical_recipes.c/tred2.c"
+#include "/opt/NR/numerical_recipes.c/tqli.c"
+#include "/opt/NR/numerical_recipes.c/pythag.c"
+//#include "/opt/NR/numerical_recipes.c/gaussj.c"
 //#include "/opt/NR/numerical_recipes.c/ludcmp.c"
 //#include "/opt/NR/numerical_recipes.c/lubksb.c"
 
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <chrono>
+//#include <chrono>
 #include <stdlib.h>
 #include <math.h>
 
@@ -347,7 +350,7 @@ public:
         for(int i=1; i<=m.rows; ++i) {
 
             for(int j=1; j<=m.columns; ++j)
-                output << m(i,j) << " ";
+                output << std::setw(15) << m(i,j) << " ";
             output << "\n";
         }
         output << "\n";
@@ -355,7 +358,7 @@ public:
         return output;
     }
 
-    Matrix operator*(const Matrix& other){
+    Matrix operator*(const Matrix& other) {
 
         int n = this->rows;
         int m = other.columns;
@@ -373,6 +376,35 @@ public:
         }
         return tmp;
     }
+    Matrix operator*(float scalar) {
+
+        int n = this->rows;
+        int m = this->columns;
+
+        Matrix tmp(n,m);
+
+        for(int i = 1 ; i <= n; i++) {
+
+            for(int j=1; j <= m; ++j)
+                tmp.m[i][j] = this->m[i][j] * scalar;
+        }
+        return tmp;
+    }
+
+    Matrix operator-(const Matrix &other) {
+
+        int n = this->rows;
+        int m = this->columns;
+
+        Matrix tmp(n,m);
+
+        for(int i=1; i<=n; ++i) {
+
+            for(int j=1; j<=m; ++j)
+                tmp.m[i][j] = this->m[i][j] - other(i,j);
+        }
+        return tmp;
+    }
 
     FVector operator*(const FVector &other) { // mnozenie Matrix przez FVector
 
@@ -383,7 +415,7 @@ public:
         for(int i=1; i <= n; ++i)
             tmp[i] = 0.0;
 
-        for(int i = 1 ; i <= this->rows; i++) {
+        for(int i = 1; i <= this->rows; i++) {
 
             for(int j = 1; j <= this->columns; ++j)
                 tmp[i] += this->m[i][j] * other[j];
@@ -408,6 +440,26 @@ public:
             }
         }
         return max;
+    }
+
+    Matrix transpose() {
+
+        int n = this->rows;
+        int m = this->columns;
+
+        Matrix tmp(n,m);
+
+        for(int i=1; i<=n; ++i) {
+
+            for(int j=1; j<=m; ++j)
+
+                if(i == j)
+                    tmp.m[i][j] = this->m[i][j];
+                else 
+                    tmp.m[i][j] = this->m[j][i];
+        }
+
+        return tmp;
     }
 
     void setName(std::string n) { name = n; }

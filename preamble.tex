@@ -1,10 +1,17 @@
-\documentclass[a4paper,onecolumn,12pt]{article}
+\documentclass[a4paper,onecolumn,10pt]{article}
 \usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[left=2.54cm,right=2.54cm]{geometry}
+\usepackage[left=1.2cm,right=1.2cm]{geometry}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{amsmath,calc,indentfirst,fancyhdr,amsfonts,graphicx,epstopdf,caption, mathcomp, subcaption,wrapfig, siunitx}
+\usepackage{amsmath,calc,indentfirst,fancyhdr,amsfonts,graphicx,epstopdf,caption, mathcomp, subcaption,wrapfig, siunitx,pbox,float,algorithm}
+\usepackage[noend]{algpseudocode}
+
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\renewcommand{\ALG@name}{Algorytm}
+\makeatother
 
 \renewcommand{\baselinestretch}{1.1}	 % odstep miedzy liniami
 \addto\captionspolish{\renewcommand{\figurename}{Wykres}} % zmiana podpisu pod obrazkami, zamiast "Rysunek" bedzie "Wykres"

@@ -1,0 +1,50 @@
+\input{../preamble.tex}
+% 17 linia w preamble.tex
+
+\renewcommand{\arraystretch}{1.2}
+
+\title{\Large\vspace{-2.5cm}{\Huge S}PRAWOZDANIE - LABORATORIUM NR {\Huge11}\\
+	\textbf{Odszumianie sygnału przy użyciu FFT - splot funkcji} } 
+\date{\Large30 maja 2019}
+\author{\Large Marek Kiełtyka}
+
+\begin{document}
+\maketitle
+
+\vspace{-1.2cm}\section{Wstęp}
+
+\subsection{Minimalizacja funkcji}
+
+
+\newpage
+\section{Zadanie do wykonania}
+
+\subsection{Opis problemu}
+
+
+
+
+\newpage
+\subsection{Wyniki}
+
+Korzystając z programu napisanego w języku C++ i spreparowanego wcześniej skryptu programu \textit{Gnuplot} sporządzono wykresy dla obu przypadków. Rozważano jedną funkcję, zatem dokładne jej minimum było jedno i wyniosło $ x_{min} = 1, y_{min} = 1 $.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[height=0.41\linewidth]{min1.png}
+	\caption{Położenia kolejnych przybliżeń minimum funkcji $ f(x, y) $ w poszczególnych iteracjach dla $\epsilon = 10^{-2} $. W tle: kontury oraz mapa wartości funkcji $ f(x, y) $. Program wykonał 37 iteracji.}
+	\label{pierwszy} 
+	\end{center}
+\end{figure}
+\begin{figure}[h!]
+	\begin{center}
+	\includegraphics[height=0.41\linewidth]{min2.png}
+	\caption{Położenia kolejnych przybliżeń minimum funkcji $ f(x, y) $ w poszczególnych iteracjach dla $\epsilon = 10^{-3} $. W tle: kontury oraz mapa wartości funkcji $ f(x, y) $. Program wykonał 1000 iteracji.}
+	\label{drugi} 
+\end{center}
+\end{figure}
+
+\newpage
+\section{Wnioski}
+
+
+\end{document}

@@ -1,10 +1,5 @@
-#pragma once
-
-#include "/opt/NR/numerical_recipes.c/nrutil.h"
-#include "/opt/NR/numerical_recipes.c/nrutil.c"
-#include "/opt/NR/numerical_recipes.c/tred2.c"
-#include "/opt/NR/numerical_recipes.c/tqli.c"
-#include "/opt/NR/numerical_recipes.c/pythag.c"
+#include "opt/NR/numerical_recipes.c/nrutil.h"
+#include "opt/NR/numerical_recipes.c/nrutil.c"
 //#include "/opt/NR/numerical_recipes.c/gaussj.c"
 //#include "/opt/NR/numerical_recipes.c/ludcmp.c"
 //#include "/opt/NR/numerical_recipes.c/lubksb.c"
@@ -12,24 +7,24 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-//#include <chrono>
 #include <stdlib.h>
 #include <math.h>
+#include <chrono>
 
 class IVector {
 
 public:
 
-    IVector(const int s = 1, std::string n = "") :
+    IVector(const long s = 1, std::string n = "") :
                                             size(s),
                                             name(n) { v = ivector(1,s);}
 
     ~IVector() { free_ivector(this->v, 1, size); }
 
     int * operator()() { return v; }
-    int operator[](const int i) const { return v[i]; }
-    int & operator[](const int i) { return v[i]; }
     int & operator*() { return *v; }
+    const int & operator[](unsigned i) const { return v[i]; }
+    int & operator[](unsigned i) { return v[i]; }
 
     IVector & operator=(IVector &other) {
 
@@ -42,19 +37,19 @@ public:
         }
 
         free_ivector(this->v, 1, size);
-        this->v = ivector(1, size); 
+        this->v = ivector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->v[i] = other[i];
 
        return *this;
     }
     IVector(const IVector &other) {
 
-        this->size = other.getSize(); 
+        this->size = other.getSize();
         this->v = ivector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->v[i] = other[i];
     }
 
@@ -62,7 +57,7 @@ public:
 
         output << "IVector " << vec.name << "\n";
 
-        for(int i=1; i<=vec.size; ++i) {
+        for(long i=1; i<=vec.size; ++i) {
 
             output << vec[i] << " ";
             output << "\n";
@@ -72,14 +67,13 @@ public:
         return output;
     }
 
-    int getSize() const { return size; }
-    int & getValue(const int i) { return v[i]; }
+    long getSize() const { return size; }
     void setName(std::string n) { name = n; }
 
 private:
 
     int *v = nullptr;
-    int size;
+    long size;
     std::string name;
 };
 
@@ -87,16 +81,16 @@ class FVector {
 
 public:
 
-    FVector(const int s = 1, std::string n = "") :
-	    			            size(s),
+    FVector(const long s = 1, std::string n = "") :
+                                size(s),
                                 name(n) { f = vector(1,s); }
 
     ~FVector() { free_vector(this->f, 1, size); }
 
     float * operator()() { return f; }
-    float operator[](const int i) const { return f[i]; }
-    float & operator[](const int i) { return f[i]; }
     float & operator*() { return *f; }
+    const float & operator[](long i) const { return f[i]; }
+    float & operator[](long i) { return f[i]; }
 
     FVector & operator=(const FVector &other) {
 
@@ -109,27 +103,27 @@ public:
             return *this;
         }
 
-	    free_vector(this->f, 1, size);
-        this->f = vector(1, size); 
+        free_vector(this->f, 1, size);
+        this->f = vector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->f[i] = other[i];
 
        return *this;
     }
     FVector(const FVector &other) {
 
-        this->size = other.getSize(); 
+        this->size = other.getSize();
         this->f = vector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->f[i] = other[i];
     }
 
     FVector operator-(const FVector &other) {
 
         FVector tmp(other.size);
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->f[i] - other[i];
 
         return tmp;
@@ -139,7 +133,7 @@ public:
 
         FVector tmp(other.size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->f[i] + other[i];
 
         return tmp;
@@ -149,7 +143,7 @@ public:
 
         FVector tmp(this->size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->f[i] * scalar;
 
         return tmp;
@@ -159,7 +153,7 @@ public:
 
         float sum = 0.0;
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             sum += this->f[i] * other[i];
 
         return sum;
@@ -169,9 +163,9 @@ public:
 
         output << "FVector " << vec.name << "\n";
 
-        for(int i=1; i<=vec.size; ++i)
+        for(long i=1; i<=vec.size; ++i)
             output << vec[i] << "\n";
-            
+
         output << "\n";
 
         return output;
@@ -182,31 +176,29 @@ public:
         return sqrt(*this * *this);
     }
 
-    const int getSize() const { return size; }
-    float & getValue(const int i) { return f[i]; }
+    long getSize() const { return size; }
     void setName(std::string n) { name = n; }
 
 private:
 
-    int size;
-    std::string name;
     float *f = nullptr;
+    long size;
+    std::string name;
 };
 
 class DVector {
 
 public:
 
-    DVector(const int s = 1, std::string n = "") :
-        size(s),
-        name(n) { d = dvector(1,s); }
+    DVector(const long s = 1, std::string n = "") :  size(s),
+                                                    name(n) { d = dvector(1,s); }
 
     ~DVector() { free_dvector(this->d, 1, size); }
 
     double * operator()() { return d; }
-    double operator[](const int i) const { return d[i]; }
-    double & operator[](const int i) { return d[i]; }
     double & operator*() { return *d; }
+    const double & operator[](long i) const { return d[i]; }
+    double & operator[](long i) { return d[i]; }
 
     DVector & operator=(const DVector &other) {
 
@@ -222,7 +214,7 @@ public:
         free_dvector(this->d, 1, size);
         this->d = dvector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->d[i] = other[i];
 
         return *this;
@@ -232,14 +224,14 @@ public:
         this->size = other.getSize();
         this->d = dvector(1, size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             this->d[i] = other[i];
     }
 
     DVector operator-(const DVector &other) {
 
         DVector tmp(other.size);
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->d[i] - other[i];
 
         return tmp;
@@ -249,17 +241,17 @@ public:
 
         DVector tmp(other.size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->d[i] + other[i];
 
         return tmp;
     }
 
-    DVector operator*(float scalar) { // mnozenie wektora double przez skalar
+    DVector operator*(double scalar) { // mnozenie wektora double przez skalar
 
         DVector tmp(this->size);
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             tmp[i] = this->d[i] * scalar;
 
         return tmp;
@@ -269,7 +261,7 @@ public:
 
         double sum = 0.0;
 
-        for(int i = 1 ; i <= size; i++)
+        for(long i = 1 ; i <= size; i++)
             sum += this->d[i] * other[i];
 
         return sum;
@@ -279,7 +271,7 @@ public:
 
         output << "FVector " << vec.name << "\n";
 
-        for(int i=1; i<=vec.size; ++i)
+        for(long i=1; i<=vec.size; ++i)
             output << vec[i] << "\n";
 
         output << "\n";
@@ -291,15 +283,14 @@ public:
         return sqrt(*this * *this);
     }
 
-    const int getSize() const { return size; }
-    double & getValue(const int i) { return d[i]; }
+    long getSize() const { return size; }
     void setName(std::string n) { name = n; }
 
 private:
 
-    int size;
-    std::string name;
     double *d = nullptr;
+    long size;
+    std::string name;
 };
 
 class Matrix {
@@ -307,7 +298,7 @@ class Matrix {
 public:
 
     ~Matrix() { free_matrix(this->m, 1, rows, 1, columns); }
-    Matrix(int r = 1, int c = 1, std::string n = "") :
+    Matrix(long r = 1, long c = 1, std::string n = "") :
                                                 m { matrix(1, r, 1, c) },
                                                 rows(r),
                                                 columns(c),
@@ -316,15 +307,15 @@ public:
     Matrix & operator=(const Matrix &other){
 
        if(rows != other.rows || columns != other.columns) {
-           
+
            std::cout << "Zle przypisanie Matrixa!\n";
            return *this;
        }
        free_matrix(m, 1, rows, 1, columns);
        m = matrix(1, rows, 1, columns);
 
-        for(int i = 1 ; i <= rows; i++) {
-            for(int j = 1 ; j <= columns; j++)
+        for(long i = 1 ; i <= rows; i++) {
+            for(long j = 1 ; j <= columns; j++)
                 this->m[i][j] = other.m[i][j];
         }
        return *this;
@@ -336,8 +327,8 @@ public:
         columns = other.columns;
         m = matrix(1, rows, 1, columns);
 
-       for(int i = 1; i <= rows; i++) {
-           for(int j = 1 ; j <= columns; j++)
+       for(long i = 1; i <= rows; i++) {
+           for(long j = 1 ; j <= columns; j++)
                this->m[i][j] = other.m[i][j];
        }
     }
@@ -347,9 +338,9 @@ public:
 
         output << "\t\tMacierz " << m.name << "\n";
 
-        for(int i=1; i<=m.rows; ++i) {
+        for(long i=1; i<=m.rows; ++i) {
 
-            for(int j=1; j<=m.columns; ++j)
+            for(long j=1; j<=m.columns; ++j)
                 output << std::setw(15) << m(i,j) << " ";
             output << "\n";
         }
@@ -360,17 +351,17 @@ public:
 
     Matrix operator*(const Matrix& other) {
 
-        int n = this->rows;
-        int m = other.columns;
+        long n = this->rows;
+        long m = other.columns;
 
         Matrix tmp(n,m);
 
-        for(int i = 1 ; i <= n; i++) {
+        for(long i = 1 ; i <= n; i++) {
 
-            for(int j=1; j <= m; ++j) {
+            for(long j=1; j <= m; ++j) {
 
                 tmp.m[i][j] = 0.0;
-                for(int k=1; k<=this->columns; ++k)
+                for(long k=1; k<=this->columns; ++k)
                     tmp.m[i][j] += this->m[i][k] * other.m[k][j];
             }
         }
@@ -378,14 +369,14 @@ public:
     }
     Matrix operator*(float scalar) {
 
-        int n = this->rows;
-        int m = this->columns;
+        long n = this->rows;
+        long m = this->columns;
 
         Matrix tmp(n,m);
 
-        for(int i = 1 ; i <= n; i++) {
+        for(long i = 1 ; i <= n; i++) {
 
-            for(int j=1; j <= m; ++j)
+            for(long j=1; j <= m; ++j)
                 tmp.m[i][j] = this->m[i][j] * scalar;
         }
         return tmp;
@@ -393,14 +384,14 @@ public:
 
     Matrix operator-(const Matrix &other) {
 
-        int n = this->rows;
-        int m = this->columns;
+        long n = this->rows;
+        long m = this->columns;
 
         Matrix tmp(n,m);
 
-        for(int i=1; i<=n; ++i) {
+        for(long i=1; i<=n; ++i) {
 
-            for(int j=1; j<=m; ++j)
+            for(long j=1; j<=m; ++j)
                 tmp.m[i][j] = this->m[i][j] - other(i,j);
         }
         return tmp;
@@ -408,32 +399,32 @@ public:
 
     FVector operator*(const FVector &other) { // mnozenie Matrix przez FVector
 
-        int n = other.getSize();
+        long n = other.getSize();
 
         FVector tmp(n);
 
-        for(int i=1; i <= n; ++i)
+        for(long i=1; i <= n; ++i)
             tmp[i] = 0.0;
 
-        for(int i = 1; i <= this->rows; i++) {
+        for(long i = 1; i <= this->rows; i++) {
 
-            for(int j = 1; j <= this->columns; ++j)
+            for(long j = 1; j <= this->columns; ++j)
                 tmp[i] += this->m[i][j] * other[j];
         }
         return tmp;
     }
 
-    float & operator()(const int i, const int j) { return m[i][j]; }
-    const float & operator()(const int i, const int j) const { return m[i][j]; }
+    float & operator()(long i, long j) { return m[i][j]; }
+    const float & operator()(long i, long j) const { return m[i][j]; }
     float ** operator()() { return m; }
 
     float ptrMatrix() { // wskaznik uwarunkowania Matrix float jako najwieksza bezwzgledna wartosc z jej wnetrza
 
         float max = fabs(m[1][1]);
 
-        for(int i=1; i<=rows; ++i) {
+        for(long i=1; i<=rows; ++i) {
 
-            for(int j=1; j<=columns; ++j) {
+            for(long j=1; j<=columns; ++j) {
 
                 if(max < fabs(m[i][j]))
                     max = fabs(m[i][j]);
@@ -444,18 +435,18 @@ public:
 
     Matrix transpose() {
 
-        int n = this->rows;
-        int m = this->columns;
+        long n = this->rows;
+        long m = this->columns;
 
         Matrix tmp(n,m);
 
-        for(int i=1; i<=n; ++i) {
+        for(long i=1; i<=n; ++i) {
 
-            for(int j=1; j<=m; ++j)
+            for(long j=1; j<=m; ++j)
 
                 if(i == j)
                     tmp.m[i][j] = this->m[i][j];
-                else 
+                else
                     tmp.m[i][j] = this->m[j][i];
         }
 
@@ -467,8 +458,8 @@ public:
 private:
 
     float **m;
-    int rows;
-    int columns;
+    long rows;
+    long columns;
     std::string name;
 
 };
@@ -478,7 +469,7 @@ class DMatrix {
 public:
 
     ~DMatrix() { free_dmatrix(this->m, 1, rows, 1, columns); }
-    DMatrix(int r = 1, int c = 1, std::string n = "") :
+    DMatrix(long r = 1, long c = 1, std::string n = "") :
         m { dmatrix(1, r, 1, c) },
         rows(r),
         columns(c),
@@ -487,15 +478,15 @@ public:
     DMatrix & operator=(const DMatrix &other){
 
         if(rows != other.rows || columns != other.columns) {
-           
+
            std::cout << "Zle przypisanie DMatrixa!\n";
            return *this;
         }
        free_dmatrix(m, 1, rows, 1, columns);
        m = dmatrix(1, rows, 1, columns);
 
-        for(int i = 1 ; i <= rows; i++) {
-            for(int j = 1 ; j <= columns; j++)
+        for(long i = 1 ; i <= rows; i++) {
+            for(long j = 1 ; j <= columns; j++)
                 this->m[i][j] = other.m[i][j];
         }
        return *this;
@@ -507,8 +498,8 @@ public:
         columns = other.columns;
         m = dmatrix(1, rows, 1, columns);
 
-       for(int i = 1; i <= rows; i++) {
-           for(int j = 1 ; j <= columns; j++)
+       for(long i = 1; i <= rows; i++) {
+           for(long j = 1 ; j <= columns; j++)
                this->m[i][j] = other.m[i][j];
        }
     }
@@ -517,9 +508,9 @@ public:
 
         output << "\t\tMacierz " << m.name << "\n";
 
-        for(int i=1; i<=m.rows; ++i) {
+        for(long i=1; i<=m.rows; ++i) {
 
-            for(int j=1; j<=m.columns; ++j)
+            for(long j=1; j<=m.columns; ++j)
                 output << m(i,j) << " ";
             output << "\n";
         }
@@ -530,17 +521,17 @@ public:
 
     DMatrix operator*(const DMatrix& other){ // mnozenie DMatrix przez DMatrix
 
-        int n = this->rows;
-        int m = other.columns;
+        long n = this->rows;
+        long m = other.columns;
 
         DMatrix tmp(n,m);
 
-        for(int i = 1 ; i <= n; i++) {
+        for(long i = 1 ; i <= n; i++) {
 
-            for(int j=1; j <= m; ++j) {
+            for(long j=1; j <= m; ++j) {
 
                 tmp.m[i][j] = 0.0;
-                for(int k=1; k<=this->columns; ++k)
+                for(long k=1; k<=this->columns; ++k)
                     tmp.m[i][j] += this->m[i][k] * other.m[k][j];
             }
         }
@@ -549,32 +540,32 @@ public:
 
     DVector operator*(const DVector &other) { // mnozenie DMatrix przez DVector
 
-        int n = other.getSize();
+        long n = other.getSize();
 
         DVector tmp(n);
 
-        for(int i=1; i <= n; ++i)
+        for(long i=1; i <= n; ++i)
             tmp[i] = 0.0;
 
-        for(int i = 1 ; i <= this->rows; i++) {
+        for(long i = 1 ; i <= this->rows; i++) {
 
-            for(int j = 1; j <= this->columns; ++j)
+            for(long j = 1; j <= this->columns; ++j)
                 tmp[i] += this->m[i][j] * other[j];
         }
         return tmp;
     }
 
-    double & operator()(const int i, const int j) { return m[i][j]; }
-    const double & operator()(const int i, const int j) const { return m[i][j]; }
+    double & operator()(long i, long j) { return m[i][j]; }
+    const double & operator()(long i, long j) const { return m[i][j]; }
     double ** operator()() { return m; }
 
     double ptrMatrix() { // wskaznik uwarunkowania DMatrix jako najwieksza bezwzgledna wartosc z jej wnetrza
 
         double max = fabs(m[1][1]);
 
-        for(int i=1; i<=rows; ++i) {
+        for(long i=1; i<=rows; ++i) {
 
-            for(int j=1; j<=columns; ++j) {
+            for(long j=1; j<=columns; ++j) {
 
                 if(max < fabs(m[i][j]))
                     max = fabs(m[i][j]);
@@ -588,8 +579,8 @@ public:
 private:
 
     double **m;
-    int rows;
-    int columns;
+    long rows;
+    long columns;
     std::string name;
 
 };

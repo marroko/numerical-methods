@@ -4,7 +4,7 @@ int main() {
 
     constexpr int N = 5;
 
-    Matrix A(N, N, "A"), P(N, N, "przeksztalcenia P"), Y(N, N, "Y"), X(N, N, "X");
+    FMatrix A(N, N, "A"), P(N, N, "przeksztalcenia P"), Y(N, N, "Y"), X(N, N, "X");
     FVector d(N, "d"), e(N, "e"), tmp(N, "tmp");
     float sum1 = 0.0;
     float sum2 = 0.0;
@@ -31,11 +31,11 @@ int main() {
 
     // redukcji macierzy P (wlasciwie A) do postaci trójdiagonalnej
 
-    tred2(P(), N, d(), e());
+    //tred2(P(), N, d(), e());
 
     std::cout << A << P;
     
-    tqli(d(), e(), N, Y());
+    //tqli(d(), e(), N, Y());
 
     // kolumny Y przechowuja kolejne wektory wlasne T
     std::cout << Y;
@@ -43,7 +43,8 @@ int main() {
     // wartosci wlasne macierzy A
     std::cout << d;
 
-    X = P*Y;
+    auto tmpMatrix = P*Y;
+    X = dynamic_cast<FMatrix &>(tmpMatrix);
 
     // wektory wlasne xk macierzy A dla odpowiednich wartosci wlasnych
     std::cout << X;
